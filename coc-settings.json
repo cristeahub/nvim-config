@@ -1,0 +1,67 @@
+{
+  "coc.preferences.formatOnSave": true,
+
+  "languageserver": {
+    "haskell": {
+      "command": "haskell-language-server-wrapper",
+      "args": ["--lsp"],
+      "rootPatterns": [
+        ".stack.yaml",
+        ".hie-bios",
+        "BUILD.bazel",
+        "cabal.config",
+        "package.yaml"
+      ],
+      "filetypes": ["hs", "lhs", "haskell"],
+      "initializationOptions": {
+        "languageServerHaskell": {
+          "hlintOn": true,
+          "maxNumberOfProblems": 10,
+          "completionSnippetsOn": true
+        }
+      }
+    },
+    "terraform": {
+      "command": "terraform-ls",
+      "args": ["serve"],
+      "filetypes": ["terraform", "tf"],
+      "initializationOptions": {},
+      "settings": {}
+    },
+    "swift": {
+      "filetypes": ["swift"],
+      "command": "sourcekit-lsp"
+    }
+  },
+
+  "coc.preferences.jumpCommand": "tabe",
+
+  "python.analysis.extraPaths": ["app"],
+  "python.analysis.typeCheckingMode": "off",
+
+  "python.sortImports.args": ["--jobs=8"],
+
+  "python.linting.enabled": true,
+  "python.linting.flake8Args": ["--jobs=8"],
+  "python.linting.flake8Enabled": true,
+  "python.linting.lintOnSave": true,
+  "python.linting.ruffEnabled": true,
+  "python.linting.mypyEnabled": true,
+
+  "python.formatting.provider": "blackd",
+  "python.formatting.blackdPath": ".venv/bin/blackd",
+  "python.formatting.blackdHTTPHeaders": {
+    "X-Line-Length": "120",
+    "X-Skip-String-Normalization": "true",
+    "X-Fast-Or-Safe": "fast"
+  },
+
+  "python.pythonPath": ".venv/bin/python",
+
+  "pyright.enable": true,
+  "pyright.organizeimports.provider": "isort",
+
+  "diagnostic.virtualText": true,
+
+  "typescript.inlayHints.propertyDeclarationTypes.enabled": true
+}
