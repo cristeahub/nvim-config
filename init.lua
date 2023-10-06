@@ -12,7 +12,10 @@ require('packer').startup(function(use)
     use 'wbthomason/packer.nvim'
     use {'neoclide/coc.nvim', branch = 'release'}
     use 'junegunn/fzf'
-    use 'junegunn/fzf.vim'
+		use { 'ibhagwan/fzf-lua',
+			-- optional for icon support
+			requires = { 'nvim-tree/nvim-web-devicons' }
+		}
     use 'antoinemadec/coc-fzf'
     use {
 	    'nvim-lualine/lualine.nvim',
@@ -116,6 +119,8 @@ vim.api.nvim_set_keymap('n', '<leader>r', ':Rg<CR>', {noremap = true})
 vim.cmd([[
 let g:fzf_action = {'enter': 'tabedit'}
 ]])
+
+require('fzf-lua').register_ui_select()
 
 -- lazyredraw
 vim.cmd([[
