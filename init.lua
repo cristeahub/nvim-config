@@ -10,6 +10,7 @@ vim.g.mapleader = " "
 
 require('packer').startup(function(use)
     use 'wbthomason/packer.nvim'
+		use 'nvim-tree/nvim-web-devicons'
     use {'neoclide/coc.nvim', branch = 'release'}
     use 'junegunn/fzf'
 		use { 'ibhagwan/fzf-lua',
@@ -19,13 +20,13 @@ require('packer').startup(function(use)
     use 'antoinemadec/coc-fzf'
     use {
 	    'nvim-lualine/lualine.nvim',
-	    requires = { 'kyazdani42/nvim-web-devicons', opt = true }
+	    requires = { 'nvim-tree/nvim-web-devicons' }
     } 
 		use 'nanotech/jellybeans.vim'
     use 'lewis6991/gitsigns.nvim'
     use 'nvim-treesitter/nvim-treesitter'
     use 'nvim-treesitter/nvim-treesitter-context'
-    use {'akinsho/bufferline.nvim', tag = "v3.*", requires = 'nvim-tree/nvim-web-devicons'}
+    use {'akinsho/bufferline.nvim', tag = "v4.4.0", requires = 'nvim-tree/nvim-web-devicons'}
 
 		-- llm
 		use 'david-kunz/gen.nvim'
@@ -114,11 +115,20 @@ vim.bo.synmaxcol=500 --Don't bother highlighting anything over 500 chars
 vim.api.nvim_set_keymap('c', 'w!!', '%!sudo tee > /dev/null %', {})
 
 -- fzf
-vim.api.nvim_set_keymap('n', '<leader>f', ':GFiles<CR>', {noremap = true})
-vim.api.nvim_set_keymap('n', '<leader>r', ':Rg<CR>', {noremap = true})
+vim.api.nvim_set_keymap('n', '<leader>f', ':FzfLua git_files<CR>', {noremap = true})
+vim.api.nvim_set_keymap('n', '<leader>r', ':FzfLua grep<CR>', {noremap = true})
 vim.cmd([[
 let g:fzf_action = {'enter': 'tabedit'}
 ]])
+
+local actions = require "fzf-lua.actions"
+require'fzf-lua'.setup {
+	actions = {
+    files = {
+      ["default"]     = actions.file_tabedit,
+		}
+	}
+}
 
 require('fzf-lua').register_ui_select()
 
