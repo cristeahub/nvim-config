@@ -24,10 +24,31 @@ require('packer').startup(function(use)
     use 'nvim-treesitter/nvim-treesitter-context'
     use {'akinsho/bufferline.nvim', tag = "v3.*", requires = 'nvim-tree/nvim-web-devicons'}
 
+		-- llm
+		use 'david-kunz/gen.nvim'
+
     if packer_bootstrap then
         require('packer').sync()
     end
 end)
+
+-- llm
+require('gen').prompts['Elaborate_Text'] = {
+  prompt = "Elaborate the following text:\n$text",
+  replace = true
+}
+require('gen').prompts['Fix_Code'] = {
+  prompt = "Fix the following code. Only ouput the result in format ```$filetype\n...\n```:\n```$filetype\n$text\n```",
+  replace = true,
+  extract = "```$filetype\n(.-)```"
+}
+
+vim.api.nvim_set_keymap('n', '<leader>d', ':Gen<CR>', {noremap = true})
+vim.api.nvim_set_keymap('v', '<leader>d', ':Gen<CR>', {noremap = true})
+vim.api.nvim_set_keymap('n', '<leader>ge', ':Gen Elaborate_Text<CR>', {noremap = true})
+vim.api.nvim_set_keymap('v', '<leader>ge', ':Gen Elaborate_Text<CR>', {noremap = true})
+vim.api.nvim_set_keymap('n', '<leader>gf', ':Gen Fix_Code<CR>', {noremap = true})
+vim.api.nvim_set_keymap('v', '<leader>gf', ':Gen Fix_Code<CR>', {noremap = true})
 
 -- colorscheme
 vim.cmd('colorscheme jellybeans')
@@ -84,7 +105,7 @@ vim.g.expandtab=true
 vim.bo.softtabstop=4
 vim.bo.autoindent=true
 vim.g.tabpagemax=9999999
-vim.bo.backupcopy=true
+vim.bo.backupcopy='yes'
 vim.bo.synmaxcol=500 --Don't bother highlighting anything over 500 chars
 
 vim.api.nvim_set_keymap('c', 'w!!', '%!sudo tee > /dev/null %', {})
