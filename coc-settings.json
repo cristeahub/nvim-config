@@ -2,6 +2,15 @@
   "coc.preferences.formatOnSave": true,
 
   "languageserver": {
+    "ruff-lsp": {
+      "command": "ruff-lsp",
+      "filetypes": ["python"]
+    },
+    "ocaml-lsp": {
+      "command": "opam",
+      "args": ["config", "exec", "--", "ocamllsp"],
+      "filetypes": ["ocaml", "reason"]
+    },
     "haskell": {
       "command": "haskell-language-server-wrapper",
       "args": ["--lsp"],
@@ -69,35 +78,27 @@
     }
   },
 
-  "coc.preferences.jumpCommand": "tabe",
+  "coc.preferences.jumpCommand": "drop",
 
   "python.analysis.extraPaths": ["app"],
   "python.analysis.typeCheckingMode": "off",
 
   "python.sortImports.args": ["--jobs=8"],
 
-  "python.linting.enabled": true,
+  "python.linting.enabled": false,
   "python.linting.flake8Args": ["--jobs=8"],
-  "python.linting.flake8Enabled": true,
-  "python.linting.lintOnSave": true,
-  "python.linting.ruffEnabled": true,
+  "python.linting.flake8Enabled": false,
+  "python.linting.lintOnSave": false,
+  "python.linting.ruffEnabled": false,
   "python.linting.mypyEnabled": true,
-
-  "python.formatting.provider": "blackd",
-  "python.formatting.blackdPath": ".venv/bin/blackd",
-  "python.formatting.blackdHTTPHeaders": {
-    "X-Line-Length": "120",
-    "X-Skip-String-Normalization": "true",
-    "X-Fast-Or-Safe": "fast"
-  },
 
   "python.pythonPath": ".venv/bin/python",
 
   "pyright.enable": true,
-  "pyright.organizeimports.provider": "isort",
 
   "diagnostic.virtualText": true,
 
-  "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
-  "typescript.inlayHints.paramterNames.enabled": true
+  "inlayHint.enable": false,
+
+  "biome.bin": "yarn biome"
 }

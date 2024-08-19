@@ -26,33 +26,113 @@ require('packer').startup(function(use)
     use 'lewis6991/gitsigns.nvim'
     use 'nvim-treesitter/nvim-treesitter'
     use 'nvim-treesitter/nvim-treesitter-context'
+    use 'HiPhish/rainbow-delimiters.nvim'
     use {'akinsho/bufferline.nvim', tag = "v4.4.0", requires = 'nvim-tree/nvim-web-devicons'}
 
-		-- llm
-		use 'david-kunz/gen.nvim'
+    use({
+            "jackMort/ChatGPT.nvim",
+            config = function()
+                    require("chatgpt").setup()
+            end,
+            requires = {
+                    "MunifTanjim/nui.nvim",
+                    "nvim-lua/plenary.nvim",
+                    "folke/trouble.nvim",
+                    "nvim-telescope/telescope.nvim"
+            }
+    })
+    use {
+            "folke/which-key.nvim",
+            config = function()
+                    vim.o.timeout = true
+                    vim.o.timeoutlen = 300
+                    require("which-key").setup {
+                            -- your configuration comes here
+                            -- or leave it empty to use the default settings
+                            -- refer to the configuration section below
+                    }
+            end
+    }
+
+
+    -- llm
+    -- use 'david-kunz/gen.nvim'
+    --use 'github/copilot.vim'
 
     if packer_bootstrap then
         require('packer').sync()
     end
 end)
 
--- llm
-require('gen').prompts['Elaborate_Text'] = {
-  prompt = "Elaborate the following text:\n$text",
-  replace = true
-}
-require('gen').prompts['Fix_Code'] = {
-  prompt = "Fix the following code. Only ouput the result in format ```$filetype\n...\n```:\n```$filetype\n$text\n```",
-  replace = true,
-  extract = "```$filetype\n(.-)```"
-}
+--vim.api.nvim_set_keymap('i', '<C-l>', 'copilot#Accept("<End>")', {silent = true, script = true, expr = true})
+--vim.g.copilot_no_tab_map = true
+--vim.g.copilot_assume_mapped = true
+--vim.g.copilot_proxy = 'echo -n http://localhost:11434'
 
-vim.api.nvim_set_keymap('n', '<leader>d', ':Gen<CR>', {noremap = true})
-vim.api.nvim_set_keymap('v', '<leader>d', ':Gen<CR>', {noremap = true})
-vim.api.nvim_set_keymap('n', '<leader>ge', ':Gen Elaborate_Text<CR>', {noremap = true})
-vim.api.nvim_set_keymap('v', '<leader>ge', ':Gen Elaborate_Text<CR>', {noremap = true})
-vim.api.nvim_set_keymap('n', '<leader>gf', ':Gen Fix_Code<CR>', {noremap = true})
-vim.api.nvim_set_keymap('v', '<leader>gf', ':Gen Fix_Code<CR>', {noremap = true})
+
+-- llm
+local chatgpt = require('chatgpt')
+chatgpt.setup({
+	api_key_cmd = 'echo -n yo',
+	api_host_cmd = 'echo -n http://localhost:11434',
+	openai_params = { 
+		model = "llama3",
+		frequency_penalty = 0, 
+		presence_penalty = 0, 
+		max_tokens = 300, 
+		temperature = 0, 
+		top_p = 1, 
+		n = 1, 
+	}, 
+	openai_edit_params = { 
+		model = "llama3",
+		frequency_penalty = 0, 
+		presence_penalty = 0, 
+		temperature = 0, 
+		top_p = 1, 
+		n = 1, 
+	},
+})
+
+-- require('gen').prompts['Elaborate_Text'] = {
+--   prompt = "Elaborate the following text:\n$text",
+--   replace = true
+-- }
+-- require('gen').prompts['Fix_Code'] = {
+--   prompt = "Fix the following code. Only ouput the result in format ```$filetype\n...\n```:\n```$filetype\n$text\n```",
+--   replace = true,
+--   extract = "```$filetype\n(.-)```"
+-- }
+-- require('gen').model = 'codellama'
+
+-- vim.api.nvim_set_keymap('n', '<leader>d', ':Gen<CR>', {noremap = true})
+-- vim.api.nvim_set_keymap('v', '<leader>d', ':Gen<CR>', {noremap = true})
+-- vim.api.nvim_set_keymap('n', '<leader>ge', ':Gen Elaborate_Text<CR>', {noremap = true})
+-- vim.api.nvim_set_keymap('v', '<leader>ge', ':Gen Elaborate_Text<CR>', {noremap = true})
+-- vim.api.nvim_set_keymap('n', '<leader>gf', ':Gen Fix_Code<CR>', {noremap = true})
+-- vim.api.nvim_set_keymap('v', '<leader>gf', ':Gen Fix_Code<CR>', {noremap = true})
+
+-- keybinds
+local wk = require("which-key")
+wk.register({
+	c = {
+  name = "ChatGPT",
+    c = { "<cmd>ChatGPT<CR>", "ChatGPT", mode = {"n", "v"} },
+    e = { "<cmd>ChatGPTEditWithInstruction<CR>", "Edit with instruction", mode = { "n", "v" } },
+		b = { "<cmd>ChatGPTActAs<CR>", "Act as..", mode = { "n", "v" } },
+    g = { "<cmd>ChatGPTRun grammar_correction<CR>", "Grammar Correction", mode = { "n", "v" } },
+    t = { "<cmd>ChatGPTRun translate<CR>", "Translate", mode = { "n", "v" } },
+    k = { "<cmd>ChatGPTRun keywords<CR>", "Keywords", mode = { "n", "v" } },
+    d = { "<cmd>ChatGPTRun docstring<CR>", "Docstring", mode = { "n", "v" } },
+    a = { "<cmd>ChatGPTRun add_tests<CR>", "Add Tests", mode = { "n", "v" } },
+    o = { "<cmd>ChatGPTRun optimize_code<CR>", "Optimize Code", mode = { "n", "v" } },
+    s = { "<cmd>ChatGPTRun summarize<CR>", "Summarize", mode = { "n", "v" } },
+    f = { "<cmd>ChatGPTRun fix_bugs<CR>", "Fix Bugs", mode = { "n", "v" } },
+    x = { "<cmd>ChatGPTRun explain_code<CR>", "Explain Code", mode = { "n", "v" } },
+    r = { "<cmd>ChatGPTRun roxygen_edit<CR>", "Roxygen Edit", mode = { "n", "v" } },
+    l = { "<cmd>ChatGPTRun code_readability_analysis<CR>", "Code Readability Analysis", mode = { "n", "v" } },
+  },
+}, { prefix = "<leader>" })
 
 -- colorscheme
 vim.cmd('colorscheme jellybeans')
@@ -152,6 +232,8 @@ inoremap <silent><expr> <TAB>
       \ CheckBackspace() ? "\<Tab>" :
       \ coc#refresh()
 inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+inoremap <silent><expr> <cr> coc#pum#visible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
 
 function! CheckBackspace() abort
   let col = col('.') - 1
@@ -291,7 +373,7 @@ require'nvim-treesitter.configs'.setup {
 
 require'treesitter-context'.setup{
     enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
-    max_lines = 0, -- How many lines the window should span. Values <= 0 mean no limit.
+    max_lines = 3, -- How many lines the window should span. Values <= 0 mean no limit.
     trim_scope = 'outer', -- Which context lines to discard if max_lines is exceeded. Choices: 'inner', 'outer'
     patterns = { -- Match patterns for TS nodes. These get wrapped to match at word boundaries.
         -- For all filetypes
@@ -302,11 +384,11 @@ require'treesitter-context'.setup{
             'class',
             'function',
             'method',
-            -- 'for', -- These won't appear in the context
-            -- 'while',
-            -- 'if',
-            -- 'switch',
-            -- 'case',
+            'for', -- These won't appear in the context
+            'while',
+            'if',
+            'switch',
+            'case',
         },
         -- Example for a specific filetype.
         -- If a pattern is missing, open a PR so everyone can benefit.
@@ -339,6 +421,8 @@ hi GitSignsDeleteLnInline guibg=#7e1920 term=underline
 hi GitSignsAddVirtLnInline guibg=#336449 term=underline
 hi GitSignsChangeVirtLnInline guibg=#8d6d4f term=underline
 hi GitSignsDeleteVirtLnInline guibg=#7e1920 term=underline
+
+autocmd BufWritePost,FileWritePost *.py silent! !.venv/bin/ruff check --select I --fix <afile>
 
 nmap <leader>h :Gitsigns toggle_deleted<CR>
 
