@@ -29,18 +29,22 @@ require('packer').startup(function(use)
     use 'HiPhish/rainbow-delimiters.nvim'
     use {'akinsho/bufferline.nvim', tag = "v4.4.0", requires = 'nvim-tree/nvim-web-devicons'}
 
-    use({
-            "jackMort/ChatGPT.nvim",
-            config = function()
-                    require("chatgpt").setup()
-            end,
-            requires = {
-                    "MunifTanjim/nui.nvim",
-                    "nvim-lua/plenary.nvim",
-                    "folke/trouble.nvim",
-                    "nvim-telescope/telescope.nvim"
-            }
-    })
+    use {
+	    "robitx/gp.nvim",
+	    config = function()
+		    require("gp").setup {
+			    openai_api_key = "",
+			    providers = {
+				    openai = { disable = true },
+				    ollama = { 
+					    disable = false, 
+					    endpoint = "http://localhost:11434/v1/chat/completions", 
+					    secret = "dummy_secret", 
+				    },
+			    },
+		    }
+	    end
+    }
     use {
             "folke/which-key.nvim",
             config = function()
@@ -70,30 +74,6 @@ end)
 --vim.g.copilot_proxy = 'echo -n http://localhost:11434'
 
 
--- llm
-local chatgpt = require('chatgpt')
-chatgpt.setup({
-	api_key_cmd = 'echo -n yo',
-	api_host_cmd = 'echo -n http://localhost:11434',
-	openai_params = { 
-		model = "llama3",
-		frequency_penalty = 0, 
-		presence_penalty = 0, 
-		max_tokens = 300, 
-		temperature = 0, 
-		top_p = 1, 
-		n = 1, 
-	}, 
-	openai_edit_params = { 
-		model = "llama3",
-		frequency_penalty = 0, 
-		presence_penalty = 0, 
-		temperature = 0, 
-		top_p = 1, 
-		n = 1, 
-	},
-})
-
 -- require('gen').prompts['Elaborate_Text'] = {
 --   prompt = "Elaborate the following text:\n$text",
 --   replace = true
@@ -114,25 +94,114 @@ chatgpt.setup({
 
 -- keybinds
 local wk = require("which-key")
-wk.register({
-	c = {
-  name = "ChatGPT",
-    c = { "<cmd>ChatGPT<CR>", "ChatGPT", mode = {"n", "v"} },
-    e = { "<cmd>ChatGPTEditWithInstruction<CR>", "Edit with instruction", mode = { "n", "v" } },
-		b = { "<cmd>ChatGPTActAs<CR>", "Act as..", mode = { "n", "v" } },
-    g = { "<cmd>ChatGPTRun grammar_correction<CR>", "Grammar Correction", mode = { "n", "v" } },
-    t = { "<cmd>ChatGPTRun translate<CR>", "Translate", mode = { "n", "v" } },
-    k = { "<cmd>ChatGPTRun keywords<CR>", "Keywords", mode = { "n", "v" } },
-    d = { "<cmd>ChatGPTRun docstring<CR>", "Docstring", mode = { "n", "v" } },
-    a = { "<cmd>ChatGPTRun add_tests<CR>", "Add Tests", mode = { "n", "v" } },
-    o = { "<cmd>ChatGPTRun optimize_code<CR>", "Optimize Code", mode = { "n", "v" } },
-    s = { "<cmd>ChatGPTRun summarize<CR>", "Summarize", mode = { "n", "v" } },
-    f = { "<cmd>ChatGPTRun fix_bugs<CR>", "Fix Bugs", mode = { "n", "v" } },
-    x = { "<cmd>ChatGPTRun explain_code<CR>", "Explain Code", mode = { "n", "v" } },
-    r = { "<cmd>ChatGPTRun roxygen_edit<CR>", "Roxygen Edit", mode = { "n", "v" } },
-    l = { "<cmd>ChatGPTRun code_readability_analysis<CR>", "Code Readability Analysis", mode = { "n", "v" } },
-  },
-}, { prefix = "<leader>" })
+wk.add({
+    -- VISUAL mode mappings
+    -- s, x, v modes are handled the same way by which_key
+    {
+        mode = { "v" },
+        nowait = true,
+        remap = false,
+        { "<leader>c<C-t>", ":<C-u>'<,'>GpChatNew tabnew<cr>", desc = "ChatNew tabnew" },
+        { "<leader>c<C-v>", ":<C-u>'<,'>GpChatNew vsplit<cr>", desc = "ChatNew vsplit" },
+        { "<leader>c<C-x>", ":<C-u>'<,'>GpChatNew split<cr>", desc = "ChatNew split" },
+        { "<leader>ca", ":<C-u>'<,'>GpAppend<cr>", desc = "Visual Append (after)" },
+        { "<leader>cb", ":<C-u>'<,'>GpPrepend<cr>", desc = "Visual Prepend (before)" },
+        { "<leader>cc", ":<C-u>'<,'>GpChatNew<cr>", desc = "Visual Chat New" },
+        { "<leader>cg", group = "generate into new .." },
+        { "<leader>cge", ":<C-u>'<,'>GpEnew<cr>", desc = "Visual GpEnew" },
+        { "<leader>cgn", ":<C-u>'<,'>GpNew<cr>", desc = "Visual GpNew" },
+        { "<leader>cgp", ":<C-u>'<,'>GpPopup<cr>", desc = "Visual Popup" },
+        { "<leader>cgt", ":<C-u>'<,'>GpTabnew<cr>", desc = "Visual GpTabnew" },
+        { "<leader>cgv", ":<C-u>'<,'>GpVnew<cr>", desc = "Visual GpVnew" },
+        { "<leader>ci", ":<C-u>'<,'>GpImplement<cr>", desc = "Implement selection" },
+        { "<leader>cn", "<cmd>GpNextAgent<cr>", desc = "Next Agent" },
+        { "<leader>cp", ":<C-u>'<,'>GpChatPaste<cr>", desc = "Visual Chat Paste" },
+        { "<leader>cr", ":<C-u>'<,'>GpRewrite<cr>", desc = "Visual Rewrite" },
+        { "<leader>cs", "<cmd>GpStop<cr>", desc = "GpStop" },
+        { "<leader>ct", ":<C-u>'<,'>GpChatToggle<cr>", desc = "Visual Toggle Chat" },
+        { "<leader>cw", group = "Whisper" },
+        { "<leader>cwa", ":<C-u>'<,'>GpWhisperAppend<cr>", desc = "Whisper Append" },
+        { "<leader>cwb", ":<C-u>'<,'>GpWhisperPrepend<cr>", desc = "Whisper Prepend" },
+        { "<leader>cwe", ":<C-u>'<,'>GpWhisperEnew<cr>", desc = "Whisper Enew" },
+        { "<leader>cwn", ":<C-u>'<,'>GpWhisperNew<cr>", desc = "Whisper New" },
+        { "<leader>cwp", ":<C-u>'<,'>GpWhisperPopup<cr>", desc = "Whisper Popup" },
+        { "<leader>cwr", ":<C-u>'<,'>GpWhisperRewrite<cr>", desc = "Whisper Rewrite" },
+        { "<leader>cwt", ":<C-u>'<,'>GpWhisperTabnew<cr>", desc = "Whisper Tabnew" },
+        { "<leader>cwv", ":<C-u>'<,'>GpWhisperVnew<cr>", desc = "Whisper Vnew" },
+        { "<leader>cww", ":<C-u>'<,'>GpWhisper<cr>", desc = "Whisper" },
+        { "<leader>x", ":<C-u>'<,'>GpContext<cr>", desc = "Visual GpContext" },
+    },
+
+    -- NORMAL mode mappings
+    {
+        mode = { "n" },
+        nowait = true,
+        remap = false,
+        { "<leader>c<C-t>", "<cmd>GpChatNew tabnew<cr>", desc = "New Chat tabnew" },
+        { "<leader>c<C-v>", "<cmd>GpChatNew vsplit<cr>", desc = "New Chat vsplit" },
+        { "<leader>c<C-x>", "<cmd>GpChatNew split<cr>", desc = "New Chat split" },
+        { "<leader>ca", "<cmd>GpAppend<cr>", desc = "Append (after)" },
+        { "<leader>cb", "<cmd>GpPrepend<cr>", desc = "Prepend (before)" },
+        { "<leader>cc", "<cmd>GpChatNew<cr>", desc = "New Chat" },
+        { "<leader>cf", "<cmd>GpChatFinder<cr>", desc = "Chat Finder" },
+        { "<leader>cg", group = "generate into new .." },
+        { "<leader>cge", "<cmd>GpEnew<cr>", desc = "GpEnew" },
+        { "<leader>cgn", "<cmd>GpNew<cr>", desc = "GpNew" },
+        { "<leader>cgp", "<cmd>GpPopup<cr>", desc = "Popup" },
+        { "<leader>cgt", "<cmd>GpTabnew<cr>", desc = "GpTabnew" },
+        { "<leader>cgv", "<cmd>GpVnew<cr>", desc = "GpVnew" },
+        { "<leader>cn", "<cmd>GpNextAgent<cr>", desc = "Next Agent" },
+        { "<leader>cr", "<cmd>GpRewrite<cr>", desc = "Inline Rewrite" },
+        { "<leader>cs", "<cmd>GpStop<cr>", desc = "GpStop" },
+        { "<leader>ct", "<cmd>GpChatToggle<cr>", desc = "Toggle Chat" },
+        { "<leader>cw", group = "Whisper" },
+        { "<leader>cwa", "<cmd>GpWhisperAppend<cr>", desc = "Whisper Append (after)" },
+        { "<leader>cwb", "<cmd>GpWhisperPrepend<cr>", desc = "Whisper Prepend (before)" },
+        { "<leader>cwe", "<cmd>GpWhisperEnew<cr>", desc = "Whisper Enew" },
+        { "<leader>cwn", "<cmd>GpWhisperNew<cr>", desc = "Whisper New" },
+        { "<leader>cwp", "<cmd>GpWhisperPopup<cr>", desc = "Whisper Popup" },
+        { "<leader>cwr", "<cmd>GpWhisperRewrite<cr>", desc = "Whisper Inline Rewrite" },
+        { "<leader>cwt", "<cmd>GpWhisperTabnew<cr>", desc = "Whisper Tabnew" },
+        { "<leader>cwv", "<cmd>GpWhisperVnew<cr>", desc = "Whisper Vnew" },
+        { "<leader>cww", "<cmd>GpWhisper<cr>", desc = "Whisper" },
+        { "<leader>cx", "<cmd>GpContext<cr>", desc = "Toggle GpContext" },
+    },
+
+    -- INSERT mode mappings
+--    {
+--        mode = { "i" },
+--        nowait = true,
+--        remap = false,
+--        { "<leader>c<C-t>", "<cmd>GpChatNew tabnew<cr>", desc = "New Chat tabnew" },
+--        { "<leader>c<C-v>", "<cmd>GpChatNew vsplit<cr>", desc = "New Chat vsplit" },
+--        { "<leader>c<C-x>", "<cmd>GpChatNew split<cr>", desc = "New Chat split" },
+--        { "<leader>ca", "<cmd>GpAppend<cr>", desc = "Append (after)" },
+--        { "<leader>cb", "<cmd>GpPrepend<cr>", desc = "Prepend (before)" },
+--        { "<leader>cc", "<cmd>GpChatNew<cr>", desc = "New Chat" },
+--        { "<leader>cf", "<cmd>GpChatFinder<cr>", desc = "Chat Finder" },
+--        { "<leader>cg", group = "generate into new .." },
+--        { "<leader>cge", "<cmd>GpEnew<cr>", desc = "GpEnew" },
+--        { "<leader>cgn", "<cmd>GpNew<cr>", desc = "GpNew" },
+--        { "<leader>cgp", "<cmd>GpPopup<cr>", desc = "Popup" },
+--        { "<leader>cgt", "<cmd>GpTabnew<cr>", desc = "GpTabnew" },
+--        { "<leader>cgv", "<cmd>GpVnew<cr>", desc = "GpVnew" },
+--        { "<leader>cn", "<cmd>GpNextAgent<cr>", desc = "Next Agent" },
+--        { "<leader>cr", "<cmd>GpRewrite<cr>", desc = "Inline Rewrite" },
+--        { "<leader>cs", "<cmd>GpStop<cr>", desc = "GpStop" },
+--        { "<leader>ct", "<cmd>GpChatToggle<cr>", desc = "Toggle Chat" },
+--        { "<leader>cw", group = "Whisper" },
+--        { "<leader>cwa", "<cmd>GpWhisperAppend<cr>", desc = "Whisper Append (after)" },
+--        { "<leader>cwb", "<cmd>GpWhisperPrepend<cr>", desc = "Whisper Prepend (before)" },
+--        { "<leader>cwe", "<cmd>GpWhisperEnew<cr>", desc = "Whisper Enew" },
+--        { "<leader>cwn", "<cmd>GpWhisperNew<cr>", desc = "Whisper New" },
+--        { "<leader>cwp", "<cmd>GpWhisperPopup<cr>", desc = "Whisper Popup" },
+--        { "<leader>cwr", "<cmd>GpWhisperRewrite<cr>", desc = "Whisper Inline Rewrite" },
+--        { "<leader>cwt", "<cmd>GpWhisperTabnew<cr>", desc = "Whisper Tabnew" },
+--        { "<leader>cwv", "<cmd>GpWhisperVnew<cr>", desc = "Whisper Vnew" },
+--        { "<leader>cww", "<cmd>GpWhisper<cr>", desc = "Whisper" },
+--        { "<leader>cx", "<cmd>GpContext<cr>", desc = "Toggle GpContext" },
+--    },
+})
 
 -- colorscheme
 vim.cmd('colorscheme jellybeans')
@@ -302,45 +371,53 @@ require("nvim-treesitter.configs").setup {
 }
 
 require('gitsigns').setup {
-    signs = {
-        add = {hl = 'GitSignsAdd' , text = '│', numhl='GitSignsAddNr' , linehl='GitSignsAddLn'},
-        change = {hl = 'GitSignsChange', text = '│', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
-        delete = {hl = 'GitSignsDelete', text = '_', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
-        topdelete = {hl = 'GitSignsDelete', text = '‾', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
-        changedelete = {hl = 'GitSignsChange', text = '~', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
-    },
-    signcolumn = true, -- Toggle with :Gitsigns toggle_signs
-    numhl = true, -- Toggle with :Gitsigns toggle_numhl
-    linehl = false, -- Toggle with :Gitsigns toggle_linehl
-    word_diff = true, -- Toggle with :Gitsigns toggle_word_diff
-    watch_gitdir = {
-        interval = 1000,
-        follow_files = true
-    },
-    attach_to_untracked = true,
-    current_line_blame = true, -- Toggle with :Gitsigns toggle_current_line_blame
-    current_line_blame_opts = {
-        virt_text = true,
-        virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right_align'
-        delay = 10,
-        ignore_whitespace = false,
-    },
-    current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <abbrev_sha> <summary>',
-    sign_priority = 6,
-    update_debounce = 100,
-    status_formatter = nil, -- Use default
-    max_file_length = 40000,
-    preview_config = {
-        -- Options passed to nvim_open_win
-        border = 'single',
-        style = 'minimal',
-        relative = 'cursor',
-        row = 0,
-        col = 1
-    },
-    yadm = {
-        enable = false
-    },
+  signs = {
+    add          = { text = '┃' },
+    change       = { text = '┃' },
+    delete       = { text = '_' },
+    topdelete    = { text = '‾' },
+    changedelete = { text = '~' },
+    untracked    = { text = '┆' },
+  },
+  signs_staged = {
+    add          = { text = '┃' },
+    change       = { text = '┃' },
+    delete       = { text = '_' },
+    topdelete    = { text = '‾' },
+    changedelete = { text = '~' },
+    untracked    = { text = '┆' },
+  },
+  signs_staged_enable = true,
+  signcolumn = true,  -- Toggle with `:Gitsigns toggle_signs`
+  numhl      = false, -- Toggle with `:Gitsigns toggle_numhl`
+  linehl     = false, -- Toggle with `:Gitsigns toggle_linehl`
+  word_diff  = false, -- Toggle with `:Gitsigns toggle_word_diff`
+  watch_gitdir = {
+    follow_files = true
+  },
+  auto_attach = true,
+  attach_to_untracked = false,
+  current_line_blame = false, -- Toggle with `:Gitsigns toggle_current_line_blame`
+  current_line_blame_opts = {
+    virt_text = true,
+    virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right_align'
+    delay = 1000,
+    ignore_whitespace = false,
+    virt_text_priority = 100,
+  },
+  current_line_blame_formatter = '<author>, <author_time:%R> - <summary>',
+  sign_priority = 6,
+  update_debounce = 100,
+  status_formatter = nil, -- Use default
+  max_file_length = 40000, -- Disable if file is longer than this (in lines)
+  preview_config = {
+    -- Options passed to nvim_open_win
+    border = 'single',
+    style = 'minimal',
+    relative = 'cursor',
+    row = 0,
+    col = 1
+  },
 }
 
 require'nvim-treesitter.configs'.setup {
