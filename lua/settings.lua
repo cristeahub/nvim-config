@@ -295,3 +295,17 @@ nmap <leader>k <Plug>(coc-diagnostic-prev-error)
 nmap <leader>n <Plug>(coc-diagnostic-next)
 nmap <leader>p <Plug>(coc-diagnostic-prev)
 ]])
+
+-- avante
+--require('avante').setup {
+--  mappings = {
+--    diff = {
+--      next = "nx",
+--      prev = "px",
+--    },
+--    jump = {
+--      next = "nn",
+--      prev = "pp",
+--    }
+--  }
+--}

@@ -78,7 +78,7 @@
     }
   },
 
-  "coc.preferences.jumpCommand": "drop",
+  "coc.preferences.jumpCommand": "tabe",
 
   "python.analysis.extraPaths": ["app"],
   "python.analysis.typeCheckingMode": "off",
@@ -89,7 +89,7 @@
   "python.linting.flake8Args": ["--jobs=8"],
   "python.linting.flake8Enabled": false,
   "python.linting.lintOnSave": false,
-  "python.linting.ruffEnabled": false,
+  "python.linting.ruffEnabled": true,
   "python.linting.mypyEnabled": true,
 
   "python.pythonPath": ".venv/bin/python",
