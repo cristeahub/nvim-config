@@ -235,14 +235,14 @@ set cmdheight=1
 set signcolumn=yes
 ]])
 
+--inoremap <silent><expr> <TAB>
+--      \ coc#pum#visible() ? coc#pum#next(1) :
+--      \ CheckBackspace() ? "\<Tab>" :
+--      \ coc#refresh()
+--inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
 vim.cmd([[
 set updatetime=300
-
-inoremap <silent><expr> <TAB>
-      \ coc#pum#visible() ? coc#pum#next(1) :
-      \ CheckBackspace() ? "\<Tab>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
 inoremap <silent><expr> <cr> coc#pum#visible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
 
@@ -295,6 +295,8 @@ nmap <leader>k <Plug>(coc-diagnostic-prev-error)
 nmap <leader>n <Plug>(coc-diagnostic-next)
 nmap <leader>p <Plug>(coc-diagnostic-prev)
 ]])
+
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- avante
 --require('avante').setup {

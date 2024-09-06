@@ -1,1 +1,2 @@
 plugin/
+.mypy_cache/
