@@ -7,7 +7,7 @@ return {
 			provider = "openai",
 			openai = {
 				endpoint = "127.0.0.1:11434/v1",
-				model = "llama3.1",
+				model = "llama3.2",
 				temperature = 0,
 				max_tokens = 4096,
 				api_key_name = "",
