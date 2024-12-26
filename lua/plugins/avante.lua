@@ -1,6 +1,7 @@
 return {
   {
     "yetone/avante.nvim",
+    enabled = false,
     event = "VeryLazy",
     build = "make", -- This is Optional, only if you want to use tiktoken_core to calculate tokens count
     lazy = false,
@@ -10,7 +11,7 @@ return {
       vendors = {
         ollama = {
           endpoint = "127.0.0.1:11434/v1",
-          model = "qwen2.5-coder",
+          model = "qwen2.5-coder:32b",
           temperature = 0,
           max_tokens = 4096,
           api_key_name = "",
