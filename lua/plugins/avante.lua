@@ -1,7 +1,6 @@
 return {
   {
     "yetone/avante.nvim",
-    enabled = false,
     event = "VeryLazy",
     build = "make", -- This is Optional, only if you want to use tiktoken_core to calculate tokens count
     lazy = false,
@@ -10,10 +9,10 @@ return {
       provider = "ollama",
       vendors = {
         ollama = {
+          max_tokens = 8192,
           endpoint = "127.0.0.1:11434/v1",
-          model = "qwen2.5-coder:32b",
+          model = "mlx-community/Qwen2.5-Coder-32B-Instruct-4bit",
           temperature = 0,
-          max_tokens = 4096,
           api_key_name = "",
           ["local"] = true,
           parse_curl_args = function(opts, code_opts)
@@ -26,7 +25,6 @@ return {
               body = {
                 model = opts.model,
                 messages = require("avante.providers").openai.parse_messages(code_opts), -- you can make your own message, but this is very advanced
-                max_tokens = 2048,
                 stream = true,
               },
             }

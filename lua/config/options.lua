@@ -4,3 +4,6 @@
 vim.opt.winbar = "%=%m %f"
 vim.opt.wrap = true
 vim.g.snacks_animate = false
+
+-- views can only be fully collapsed with the global statusline
+vim.opt.laststatus = 3
