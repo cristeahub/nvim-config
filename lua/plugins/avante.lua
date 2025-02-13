@@ -11,7 +11,7 @@ return {
         ollama = {
           max_tokens = 8192,
           endpoint = "127.0.0.1:11434/v1",
-          model = "mlx-community/Qwen2.5-Coder-32B-Instruct-4bit",
+          model = "mlx-community/Qwen2.5-Coder-7B-Instruct-4bit",
           temperature = 0,
           api_key_name = "",
           ["local"] = true,
