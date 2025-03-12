@@ -5,36 +5,6 @@ return {
     build = "make", -- This is Optional, only if you want to use tiktoken_core to calculate tokens count
     lazy = false,
     keys = { "<leader>a", group = "avante", desc = "Avante" },
-    opts = {
-      provider = "ollama",
-      vendors = {
-        ollama = {
-          max_tokens = 8192,
-          endpoint = "127.0.0.1:11434/v1",
-          model = "mlx-community/Qwen2.5-Coder-7B-Instruct-4bit",
-          temperature = 0,
-          api_key_name = "",
-          ["local"] = true,
-          parse_curl_args = function(opts, code_opts)
-            return {
-              url = opts.endpoint .. "/chat/completions",
-              headers = {
-                ["Accept"] = "application/json",
-                ["Content-Type"] = "application/json",
-              },
-              body = {
-                model = opts.model,
-                messages = require("avante.providers").openai.parse_messages(code_opts), -- you can make your own message, but this is very advanced
-                stream = true,
-              },
-            }
-          end,
-          parse_response_data = function(data_stream, event_state, opts)
-            require("avante.providers").openai.parse_response(data_stream, event_state, opts)
-          end,
-        },
-      },
-    },
     dependencies = {
       "nvim-treesitter/nvim-treesitter",
       "stevearc/dressing.nvim",
